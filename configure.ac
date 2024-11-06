@@ -155,6 +155,23 @@ WARNING_CFLAGS="-Wall \
 -Wformat-security"
 AC_SUBST([WARNING_CFLAGS])
 
+# Check for libusb-1.0
+AC_ARG_WITH([libusb],
+    AS_HELP_STRING([--with-libusb],[Use libusb-1.0 for USB support (default is no)]),,
+    [with_libusb=no])
+
+if test "x$with_libusb" != "xno"; then
+    AC_CHECK_LIB(usb-1.0, libusb_init, [
+        LIBUSB_LIBS="-lusb-1.0"
+        AC_DEFINE(HAVE_LIBUSB, 1, [defined if libusb is available])
+        have_libusb=yes
+    ], [
+        AC_MSG_ERROR(["libusb-1.0 not found. Please install libusb-1.0."])
+    ])
+fi
+AC_SUBST(LIBUSB_LIBS)
+AM_CONDITIONAL(WITH_LIBUSB, [test x"${have_libusb}" = x"yes"])
+
 # Build options
 AC_ARG_ENABLE(tests,
 	AS_HELP_STRING([--disable-tests],
@@ -162,7 +179,7 @@ AC_ARG_ENABLE(tests,
 	[enable_tests=yes])
 AM_CONDITIONAL(BUILD_TESTS, [test $enable_tests != no])
 
-AC_CONFIG_HEADERS([config.h tests/unit-test.h])
+AC_CONFIG_HEADERS([config.h tests/unit-test.h src/modbus-config.h])
 AC_CONFIG_FILES([
         Makefile
         src/Makefile

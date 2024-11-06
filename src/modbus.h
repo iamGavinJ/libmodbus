@@ -19,6 +19,7 @@
 # include "stdint.h"
 #endif
 
+#include "modbus-config.h"
 #include "modbus-version.h"
 
 #if defined(_MSC_VER)
@@ -331,6 +332,9 @@ MODBUS_API void modbus_set_float_badc(float f, uint16_t *dest);
 MODBUS_API void modbus_set_float_cdab(float f, uint16_t *dest);
 
 #include "modbus-rtu.h"
+#ifdef HAVE_LIBUSB
+#include "modbus-rtu-usb.h"
+#endif /* HAVE_LIBUSB */
 #include "modbus-tcp.h"
 
 MODBUS_END_DECLS
